@@ -46,10 +46,7 @@ func main() {
 	<-stopBot
 	
 	return
-	}
-
-
-
+}
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	clientId := os.Getenv("DISCORD_CLIENT_ID")
@@ -77,9 +74,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		output_I = ""
 	)
 	
-	line := strings.Split(m.Content, "\n")
-	
-	for _, v := range line {
+	for _, v := range strings.Split(m.Content, "\n") {
 		if strings.Contains(v, "主観的情報（S）") {
 			// start S
 			output_S = "S:"
@@ -105,17 +100,18 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			output_I = "備考:"
 			destination = &output_I
 		} else if destination != nil {
-				*destination += v + "\n"
+			*destination += v + "\n"
 		}
 	}
+	/*
 	fmt.Printf(output_S)
 	fmt.Printf(output_O)
 	fmt.Printf(output_A)
 	fmt.Printf(output_P)
 	fmt.Printf(output_C)
 	fmt.Printf(output_I)
+	*/
 
-	//sendMessage(s, m.ChannelID, m.Author.Mention()+"なんか喋った!")
 	sendReply(s, m.ChannelID, output_S, m.Reference())
 	sendReply(s, m.ChannelID, output_O, m.Reference())
 	sendReply(s, m.ChannelID, output_A, m.Reference())
