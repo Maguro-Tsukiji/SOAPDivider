@@ -17,3 +17,7 @@ build = "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o main"
 run = "./main"
 ignorePorts = false
 deploymentTarget = "gce"
+
+[[ports]]
+localPort = 8000
+externalPort = 80

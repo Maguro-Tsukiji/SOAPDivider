@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -18,6 +19,8 @@ func main() {
 		BotName = "<@" + os.Getenv("DISCORD_CLIENT_ID") + ">"
 	)
 
+	go listenPort()
+	
 	fmt.Println(Token)
 	fmt.Println(BotName)
 
@@ -133,4 +136,32 @@ func sendReply(s *discordgo.Session, channelID string, msg string, reference *di
 	 if err != nil {
 		log.Println("Error sending message: ", err)
 	 }
+}
+
+func listenPort() {
+
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8000"
+	}
+
+	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Hello, world!",
+		})
+	})
+
+	r.GET("/:name", func(c *gin.Context) {
+		name := c.Param("name")
+
+		c.JSON(200, gin.H{
+			"message": fmt.Sprintf("Hello, %s!", name),
+		})
+	})
+
+	r.Run(fmt.Sprintf(":%s", port))
+
 }
