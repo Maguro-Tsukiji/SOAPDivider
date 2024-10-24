@@ -78,23 +78,23 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	)
 	
 	for _, v := range strings.Split(m.Content, "\n") {
-		if strings.Contains(v, "主観的情報（S）") {
+		if strings.Contains(v, "主観的情報") {
 			// start S
 			output_S = "S:"
 			destination = &output_S
-		} else if strings.Contains(v, "客観的情報（O）") {
+		} else if strings.Contains(v, "客観的情報") {
 			// start O
 			output_O = "O:"
 			destination = &output_O
-		} else if strings.Contains(v, "評価（A）") {
+		} else if checkAssesment(v) {
 			// start A
 			output_A = "A:"
 			destination = &output_A
-		} else if strings.Contains(v, "計画（P）") {
+		} else if checkPlan(v) {
 			// start P
 			output_P = "P:"
 			destination = &output_P
-		} else if strings.Contains(v, "ケア（C）") {
+		} else if checkCarePlan(v) {
 			// start C
 			output_C = "C:"
 			destination = &output_C
@@ -121,6 +121,45 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	sendReply(s, m.ChannelID, output_P, m.Reference())
 	sendReply(s, m.ChannelID, output_C, m.Reference())
 	sendReply(s, m.ChannelID, output_I, m.Reference())
+}
+
+func checkAssesment(s string) bool {
+/*	var s1, s2 string
+	
+	n, e := fmt.Sscanf(s, "%s(%s)", &s1, &s2)
+	if(e != nil) {
+		log.Printf("error: %s", e.Error())
+		return false
+	}
+	if(n < 1) return false;
+*/
+	if strings.Contains(s, "評価") {
+		if strings.Contains(s, "(A)") || strings.Contains(s, "（A）") ||
+			 strings.Contains(s, "(評価)") || strings.Contains(s, "（評価）") {
+			return true
+		}
+	}
+	return false
+}
+
+func checkPlan(s string) bool {
+	if strings.Contains(s, "計画") {
+		if strings.Contains(s, "(P)") || strings.Contains(s, "（P）") ||
+			 strings.Contains(s, "(計画)") || strings.Contains(s, "（計画）") {
+			return true
+		}
+	}
+	return false
+}
+
+func checkCarePlan(s string) bool {
+	if strings.Contains(s, "ケア") {
+		if strings.Contains(s, "(C)") || strings.Contains(s, "（C）") ||
+			 strings.Contains(s, "(ケア)") || strings.Contains(s, "（ケア）") {
+			return true
+		}
+	}
+	return false
 }
 
 func sendMessage(s *discordgo.Session, channelID string, msg string) {
